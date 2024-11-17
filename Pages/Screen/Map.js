@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, TextInput, Button } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 // GoMaps API Key
 const apiKey = "AlzaSyJ-7bx94F4YsL44lzOqdUXgClf2ach4mRo";
@@ -187,21 +188,30 @@ const LocationMap = () => {
     <View style={styles.container}>
       {/* Search Bar */}
       <View style={styles.searchBar}>
+        <Icon name="search" size={20} color="#888" style={styles.icon} />
         <TextInput
+          placeholder="Search for a location"
+          style={styles.inputLoc}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
+        />
+        {/* <TextInput
           style={styles.input}
           placeholder="Search for a location"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <Button title="Search" onPress={handleSearch} />
+        <Button title="Search" onPress={handleSearch} /> */}
       </View>
 
       {region && currentLocation && (
         <MapView
           style={styles.map}
           region={region}
-          onRegionChangeComplete={onRegionChangeComplete}
-          mapType="satellite"
+          //onRegionChangeComplete={onRegionChangeComplete}
+          mapType="hybrid"
         >
           {/* Marker for the current location */}
           <Marker coordinate={currentLocation} title="Your Location" />
@@ -246,18 +256,34 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     padding: 10,
+    position: "absolute",
+    top: 50,
+    left: 10,
+    right: 10,
+    zIndex: 2,
     backgroundColor: "#fff",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
   },
   input: {
     height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
+    borderRadius: 5,
     paddingLeft: 10,
-    marginBottom: 10,
+  },
+  inputLoc: {
+    paddingHorizontal: 10,
   },
   distanceContainer: {
+    position: "absolute",
+    bottom: 50,
+    left: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
     padding: 10,
-    backgroundColor: "#fff",
+    borderRadius: 5,
   },
 });
 

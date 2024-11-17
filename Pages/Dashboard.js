@@ -5,71 +5,68 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 // Screens
-import Home from "./Screen/Home";
 import Map from "./Screen/Map";
+import Calendar from "./Screen/Calendar";
 import Notification from "./Screen/Notification";
 import Profile from "./Screen/Profile";
-import Start from "./Screen/Start";
-
-const homeName = "Home";
-const mapName = "Map";
-const notificationName = "Notification";
-const profileName = "Profile";
-const startName = "Start";
+import Locate from "./Screen/Locate";
 
 const Tab = createBottomTabNavigator();
 
 const Dashboard = () => {
   return (
     <Tab.Navigator
-      initialRouteName={homeName}
+      initialRouteName="Map"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          let rn = route.name;
 
-          if (rn === homeName) {
-            iconName = focused ? "home" : "home-outline";
-          } else if (rn === mapName) {
-            iconName = focused ? "map" : "map-outline";
-          } else if (rn === notificationName) {
-            iconName = focused ? "notifications" : "notifications-outline";
-          } else if (rn === profileName) {
-            iconName = focused ? "person" : "person-outline";
-          } else if (rn === startName) {
-            iconName = focused ? "play-circle" : "play-circle-outline";
+          // Select icon based on the route name
+          switch (route.name) {
+            case "Map":
+              iconName = focused ? "map" : "map";
+              break;
+            case "Calendar":
+              iconName = focused ? "calendar" : "calendar";
+              break;
+            case "Notification":
+              iconName = focused ? "notifications" : "notifications";
+              break;
+            case "Profile":
+              iconName = focused ? "person" : "person";
+              break;
+            case "Locate":
+              iconName = focused ? "locate" : "locate";
+              break;
+            default:
+              iconName = "map"; // Default icon
           }
 
-          // Adjust the size based on whether the tab is focused
+          // Set icon color based on focus state
+          const iconColor = focused ? "#f9f7f5" : "#f9b210"; // Color changes when selected or not
+
+          // Adjust the size based on focus
           const iconSize = focused ? size * 1.5 : size;
-          
+
           return (
-            <View style={[
-              styles.iconContainer,
-              focused && styles.focusedIconContainer,
-            ]}>
-              <Ionicons 
-                name={iconName} 
-                size={iconSize} 
-                color={color} 
-              />
+            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+              <Ionicons name={iconName} size={iconSize} color={iconColor} />
             </View>
           );
         },
-        tabBarActiveTintColor: "#3498DB",
-        tabBarInactiveTintColor: "black",
         tabBarStyle: { 
-          height: 60,
-          paddingBottom: 5,
+          height: 60, 
+          paddingBottom: 5, 
+          backgroundColor: "#1f2a50",  // Set bottom tab bar color here
         },
       })}
     >
-      <Tab.Screen name={homeName} component={Home} />
-      <Tab.Screen name={mapName} component={Map} />
-      <Tab.Screen name={startName} component={Start} />
-      <Tab.Screen name={notificationName} component={Notification} />
-      <Tab.Screen name={profileName} component={Profile} />
+      <Tab.Screen name="Map" component={Map} />
+      <Tab.Screen name="Calendar" component={Calendar} />
+      <Tab.Screen name="Locate" component={Locate} />
+      <Tab.Screen name="Notification" component={Notification} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };
@@ -78,13 +75,13 @@ export default Dashboard;
 
 const styles = StyleSheet.create({
   iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 50,
     height: 50,
   },
   focusedIconContainer: {
-    backgroundColor: '#FF4444',
+    backgroundColor: "#761d1d",
     borderRadius: 25,
     marginTop: -20,
     width: 50,

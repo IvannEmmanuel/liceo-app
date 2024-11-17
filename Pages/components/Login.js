@@ -37,18 +37,9 @@ const LoginPage = () => {
   }
 
   const handleLogin = () => {
-    if (email && password) {
-      Alert.alert("Success", "Login successful!", [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("Dashboard"),
-        },
-      ]);
-    } else {
-      Alert.alert("Error", "Please enter your email and password.");
-    }
+    navigation.navigate('Dashboard')
   };
-
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
