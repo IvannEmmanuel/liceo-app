@@ -16,7 +16,6 @@ export default function App() {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="StartingPage" component={StartingPage} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
       </Stack.Navigator>
