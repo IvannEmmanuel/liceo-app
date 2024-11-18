@@ -22,17 +22,17 @@ const Notification = () => {
         },
         {
             title: "MUSIK ADELANTE",
-            time: "8 - 10 AM",
+            time: "12 - 3 PM",
             location: "LDCU MAIN CAMPUS",
         },
         {
             title: "LICEO HELP BLOOD LETTING",
-            time: "8 - 10 AM",
+            time: "3 - 5 PM",
             location: "PASEO DEL RIO",
         },
         {
             title: "LICEO U GAMES",
-            time: "8 - 10 AM",
+            time: "7 - 10 AM",
             location: "LDCU MAIN CAMPUS",
         },
     ];
@@ -61,15 +61,7 @@ const Notification = () => {
             resizeMode="cover"
         >
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.time}>07:00</Text>
-                <View style={styles.statusIcons}>
-                    <Icon name="cellphone-wireless" size={20} color="#FFF" />
-                    <Icon name="wifi" size={20} color="#FFF" />
-                    <Icon name="battery" size={20} color="#FFF" />
-                </View>
-            </View>
-
+            <View style={styles.header}></View>
             {/* Title */}
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>
@@ -137,14 +129,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
-        backgroundColor: "rgba(38, 50, 56, 0.8)", // Semi-transparent background
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
+    header: { height: 40, backgroundColor: "transparent" },
     time: {
         color: "#FFF",
         fontSize: 16,

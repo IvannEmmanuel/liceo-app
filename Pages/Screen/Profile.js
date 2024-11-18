@@ -26,14 +26,7 @@ const Profile = () => {
     return (
         <View style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.time}>07:00</Text>
-                <View style={styles.statusIcons}>
-                    <Icon name="cellphone-wireless" size={20} color="#FFF" />
-                    <Icon name="wifi" size={20} color="#FFF" />
-                    <Icon name="battery" size={20} color="#FFF" />
-                </View>
-            </View>
+            <View style={styles.header}></View>
 
             {/* Profile Section */}
             <ScrollView>
@@ -117,14 +110,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#FFF", // Set background color to white
     },
-    header: {
-        backgroundColor: "#263238",
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
+    header: { height: 40, backgroundColor: "transparent" },
     time: {
         color: "#FFF",
         fontSize: 16,
