@@ -8,6 +8,7 @@ const fetchFonts = async () => {
     await Font.loadAsync({
         "Anton-Regular": require("../assets/fonts/Anton-Regular.ttf"),
         "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
+        "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
     });
 };
 
