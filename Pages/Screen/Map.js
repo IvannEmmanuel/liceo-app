@@ -1,246 +1,161 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, TextInput, Button } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
-import * as Location from "expo-location";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+import { getCurrentPosition } from "react-native-geolocation-service";
 
-// GoMaps API Key
-const apiKey = "AlzaSyJ-7bx94F4YsL44lzOqdUXgClf2ach4mRo";
-
-const LocationMap = () => {
-  const [region, setRegion] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [hasPermission, setHasPermission] = useState(null);
+const Map = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [destination, setDestination] = useState(null);
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
-  const [distance, setDistance] = useState(null); // Added state for distance
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [infoHeader, setInfoHeader] = useState("");
+  const navigation = useNavigation();
 
-  // Coordinates for the Pharmacy Office (Liceo de Cagayan University)
-  const pharmacyLocation = {
-    latitude: 8.485858,
-    longitude: 124.639341,
-  };
+  // Location data can be dynamic and extended with more locations
+  const locations = [
+    {
+      name: "Pharmacy Office",
+      latitude: 8.485858,
+      longitude: 124.639341,
+      description:
+        "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
+      image: require("../../Images/castle.jpg"),
+    },
+    {
+      name: "Next Moves Dance Company",
+      latitude: 8.485452,
+      longitude: 124.639237,
+      description:
+        "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
+      image: require("../../Images/castle.jpg"),
+    },
+    {
+      name: "Kabina",
+      latitude: 8.504217,
+      longitude: 124.644259,
+      description:
+        "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
+      image: require("../../Images/castle.jpg"),
+    },
+  ];
 
-  // Coordinates for Next Moves Dance Company
-  const danceCompanyLocation = {
-    latitude: 8.485452,
-    longitude: 124.639237,
-  };
-
-  // Coordinates for Kabina
-  const kabinaLocation = {
-    latitude: 8.504217,
-    longitude: 124.644259,
-  };
-
+  // Request user's location
   useEffect(() => {
-    const getLocationPermission = async () => {
+    const getUserLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      setHasPermission(status === "granted");
-    };
-
-    getLocationPermission();
-
-    if (hasPermission) {
-      const getLocation = async () => {
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        setCurrentLocation({
+      if (status === "granted") {
+        const location = await Location.getCurrentPositionAsync({});
+        setUserLocation({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
         });
-
-        setRegion({
-          latitude: 8.485858,
-          longitude: 124.639341,
-          latitudeDelta: 0.001,
-          longitudeDelta: 0.001,
-        });
-      };
-
-      getLocation();
-    }
-  }, [hasPermission]);
-
-  // Handle map region change but don't update the current location marker
-  const onRegionChangeComplete = (newRegion) => {
-    setRegion(newRegion);
-  };
-
-  // Function to fetch directions and update the route (for road-following)
-  const fetchDirections = async (origin, destination) => {
-    const originString = `${origin.latitude},${origin.longitude}`;
-    const destinationString = `${destination.latitude},${destination.longitude}`;
-
-    const url = `https://maps.gomaps.pro/maps/api/directions/json?origin=${originString}&destination=${destinationString}&key=${apiKey}`;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.routes.length > 0) {
-        const points = decodePolyline(data.routes[0].overview_polyline.points);
-        setRouteCoordinates(points);
+      } else {
+        console.error("Location permission denied");
       }
-    } catch (error) {
-      console.error("Error fetching directions:", error);
-    }
-  };
+    };
+    getUserLocation();
+  }, []);
 
-  // Function to decode polyline into coordinates
-  const decodePolyline = (encoded) => {
-    let points = [];
-    let index = 0;
-    let lat = 0;
-    let lng = 0;
-
-    while (index < encoded.length) {
-      let byte,
-        shift = 0,
-        result = 0;
-      do {
-        byte = encoded.charCodeAt(index++) - 63;
-        result |= (byte & 0x1f) << shift;
-        shift += 5;
-      } while (byte >= 0x20);
-
-      let deltaLat = result & 1 ? ~(result >> 1) : result >> 1;
-      lat += deltaLat;
-
-      shift = 0;
-      result = 0;
-      do {
-        byte = encoded.charCodeAt(index++) - 63;
-        result |= (byte & 0x1f) << shift;
-        shift += 5;
-      } while (byte >= 0x20);
-
-      let deltaLng = result & 1 ? ~(result >> 1) : result >> 1;
-      lng += deltaLng;
-
-      points.push({ latitude: lat / 1e5, longitude: lng / 1e5 });
-    }
-    return points;
-  };
-
-  // Haversine formula to calculate the straight-line distance between two coordinates
-  const calculateDistance = (origin, destination) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in km
-
-    const lat1 = toRad(origin.latitude);
-    const lon1 = toRad(origin.longitude);
-    const lat2 = toRad(destination.latitude);
-    const lon2 = toRad(destination.longitude);
-
-    const dlat = lat2 - lat1;
-    const dlon = lon2 - lon1;
-
-    const a =
-      Math.sin(dlat / 2) * Math.sin(dlat / 2) +
-      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlon / 2) * Math.sin(dlon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    const distanceInKm = R * c; // Distance in km
-    console.log(`Distance in Km: ${distanceInKm}`);
-    const distanceInMeters = distanceInKm * 1000; // Convert km to meters
-    console.log(`Distance in Meters: ${distanceInMeters}`);
-    return distanceInMeters;
-  };
-
-  // Handle search and update destination
   const handleSearch = () => {
-    let location;
-    if (searchQuery.toLowerCase() === "pharmacy office") {
-      location = pharmacyLocation;
-    } else if (searchQuery.toLowerCase() === "next moves dance company") {
-      location = danceCompanyLocation;
-    } else if (searchQuery.toLowerCase() === "kabina") {
-      location = kabinaLocation;
-    }
-
-    console.log("Selected Location:", location);
-
-    if (location && currentLocation) {
-      setDestination(location);
-      fetchDirections(currentLocation, location);
-      const calculatedDistance = calculateDistance(currentLocation, location);
-      setDistance(calculatedDistance);
-      console.log("Calculated Distance:", calculatedDistance);
+    const query = searchQuery.toLowerCase();
+    const foundLocation = locations.find(
+      (location) => location.name.toLowerCase() === query
+    );
+    if (foundLocation) {
+      setSelectedLocation(foundLocation);
+      setInfoHeader(searchQuery.toUpperCase()); // Set infoHeader when search is confirmed
     } else {
-      setDestination(null);
-      setRouteCoordinates([]);
-      setDistance(null);
+      setSelectedLocation(null);
+      setInfoHeader(""); // Reset infoHeader if location not found
     }
   };
 
-  if (!hasPermission) {
-    return (
-      <View>
-        <Text>No permission to access location</Text>
-      </View>
-    );
-  }
+  const handleLocate = () => {
+    if (selectedLocation) {
+      navigation.navigate("Locate", {
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
+      {/* Map View */}
+      {userLocation ? (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
+          }}
+          mapType="hybrid"
+        >
+          {/* User Location Marker */}
+          <Marker
+            coordinate={userLocation}
+            title="Your Location"
+            description="This is where you are"
+          />
+
+          {/* Searched Location Marker */}
+          {selectedLocation && (
+            <Marker
+              coordinate={{
+                latitude: selectedLocation.latitude,
+                longitude: selectedLocation.longitude,
+              }}
+              title={selectedLocation.name}
+              description={selectedLocation.description}
+            />
+          )}
+        </MapView>
+      ) : (
+        <Text style={styles.loadingText}>Loading your location...</Text>
+      )}
+
       {/* Search Bar */}
       <View style={styles.searchBar}>
         <Icon name="search" size={20} color="#888" style={styles.icon} />
         <TextInput
-          placeholder="Search for a location"
+          placeholder="Search for a destination"
           style={styles.inputLoc}
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        {/* <TextInput
-          style={styles.input}
-          placeholder="Search for a location"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        <Button title="Search" onPress={handleSearch} /> */}
       </View>
 
-      {region && currentLocation && (
-        <MapView
-          style={styles.map}
-          region={region}
-          //onRegionChangeComplete={onRegionChangeComplete}
-          mapType="hybrid"
-        >
-          {/* Marker for the current location */}
-          <Marker coordinate={currentLocation} title="Your Location" />
-
-          {/* Marker for the destination */}
-          {destination && (
-            <>
-              <Marker coordinate={destination} title={searchQuery} />
-              {/* Polyline between current location and destination */}
-              <Polyline
-                coordinates={routeCoordinates}
-                strokeColor="purple" // Red color for the polyline
-                strokeWidth={4} // Line thickness
-              />
-            </>
-          )}
-        </MapView>
-      )}
-
-      {/* Display the calculated distance */}
-      {distance !== null && (
-        <View style={styles.distanceContainer}>
-          <Text>
-            Distance:{" "}
-            {distance < 1000
-              ? `${distance.toFixed(0)} meters` // If the distance is less than 1 km, display in meters
-              : `${(distance / 1000).toFixed(2)} km`}{" "}
-            {/* If it's 1 km or more, display in kilometers */}
-          </Text>
+      {/* Location Details */}
+      {selectedLocation && (
+        <View style={styles.infoContainer}>
+          <Image
+            source={selectedLocation.image}
+            style={styles.locationImage}
+            resizeMode="cover"
+          />
+          <Text style={styles.infoHeader}>{infoHeader}</Text>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.infoText}>{selectedLocation.description}</Text>
+            <TouchableOpacity style={styles.viewContainer}>
+              <Text style={styles.viewText}>View Full Information {">"}</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.locateButton} onPress={handleLocate}>
+            <Text style={styles.buttonText}>Locate</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -248,6 +163,16 @@ const LocationMap = () => {
 };
 
 const styles = StyleSheet.create({
+  viewText: {
+    position: "absolute",
+    left: 140,
+    marginVertical: -8,
+    fontWeight: "800",
+    fontSize: 13,
+  },
+  descriptionContainer: {
+    padding: 15,
+  },
   container: {
     flex: 1,
   },
@@ -255,36 +180,80 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchBar: {
-    padding: 10,
     position: "absolute",
-    top: 50,
+    top: 30,
     left: 10,
     right: 10,
-    zIndex: 2,
-    backgroundColor: "#fff",
-    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 15,
-  },
-  input: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingLeft: 10,
+    backgroundColor: "#f1eee7",
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomColor: "#000000",
+    borderBottomWidth: 4,
+    elevation: 3,
+    zIndex: 10,
   },
   inputLoc: {
-    paddingHorizontal: 10,
+    flex: 1,
+    marginLeft: 10,
   },
-  distanceContainer: {
+  icon: {
+    marginRight: 5,
+  },
+  infoContainer: {
     position: "absolute",
-    bottom: 50,
-    left: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    bottom: 40,
+    left: 40,
+    right: 10,
+    backgroundColor: "#fff",
+    elevation: 5,
+    width: "80%",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  locationImage: {
+    width: "100%",
+    height: 150,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  infoHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    height: 40,
+    marginBottom: 5,
+    backgroundColor: "#f9b210",
+    textAlign: "center",
+    lineHeight: 40,
+  },
+  infoText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  locateButton: {
     padding: 10,
+    backgroundColor: "#007bff",
     borderRadius: 5,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+  },
+  loadingText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 
-export default LocationMap;
+export default Map;
