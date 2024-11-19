@@ -91,13 +91,14 @@ const Locate = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#1E90FF" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
-      ) : latitude && longitude ? (
+      {latitude && longitude ? (
         userLocation ? (
+          loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#1E90FF" />
+              <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+          ) : 
           <MapView
             style={styles.map}
             initialRegion={{
