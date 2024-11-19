@@ -6,39 +6,10 @@ import {
     ScrollView,
     ImageBackground,
 } from "react-native";
-import loadFonts from "../../Style/load"; // Assuming you have this utility to load fonts
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import loadFonts from "../../Style/load";
 
 const Calendar = () => {
     const [fontsLoaded, setFontsLoaded] = useState(false);
-
-    // Event data
-    const events = [
-        {
-            date: "OCT 13",
-            title: "THANKSGIVING MASS",
-            time: "8 - 10 AM",
-            location: "LDCU MAIN CAMPUS",
-        },
-        {
-            date: "OCT 15",
-            title: "MUSIK ADELANTE",
-            time: "8 - 10 AM",
-            location: "LDCU MAIN CAMPUS",
-        },
-        {
-            date: "OCT 30",
-            title: "LICEO HELP BLOOD LETTING",
-            time: "8 - 10 AM",
-            location: "PASEO DEL RIO",
-        },
-        {
-            date: "NOV 10-13",
-            title: "LICEO U GAMES",
-            time: "8 - 10 AM",
-            location: "LDCU MAIN CAMPUS",
-        },
-    ];
 
     useEffect(() => {
         const load = async () => {
@@ -54,8 +25,36 @@ const Calendar = () => {
     }, []);
 
     if (!fontsLoaded) {
-        return null; // Return nothing while fonts are loading
+        return null; // Render nothing while fonts are loading
     }
+
+    // Event data
+    const events = [
+        {
+            date: "OCT 13",
+            title: "THANKSGIVING MASS",
+            time: "8 - 10 AM",
+            location: "LDCU MAIN CAMPUS",
+        },
+        {
+            date: "OCT 15",
+            title: "MUSIK ADELANTE",
+            time: "12 - 3 PM",
+            location: "LDCU MAIN CAMPUS",
+        },
+        {
+            date: "OCT 30",
+            title: "LICEO HELP BLOOD LETTING",
+            time: "3 - 5 PM",
+            location: "PASEO DEL RIO",
+        },
+        {
+            date: "NOV 10-13",
+            title: "LICEO U GAMES",
+            time: "7 - 10 AM",
+            location: "LDCU MAIN CAMPUS",
+        },
+    ];
 
     return (
         <ImageBackground
@@ -64,20 +63,14 @@ const Calendar = () => {
             resizeMode="cover"
         >
             {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.time}>07:00</Text>
-                <View style={styles.statusIcons}>
-                    <Icon name="cellphone-wireless" size={20} color="#FFF" />
-                    <Icon name="wifi" size={20} color="#FFF" />
-                    <Icon name="battery" size={20} color="#FFF" />
-                </View>
-            </View>
-
+            <View style={styles.header}></View>
             {/* Title */}
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>
-                    CALENDAR <Text style={styles.highlight}>OF EVENTS</Text>
-                </Text>
+                <Text style={styles.title}>CALENDAR</Text>
+                <View style={styles.highlightsContainer}>
+                    <Text style={styles.highlightSmall}>OF</Text>
+                    <Text style={styles.highlight}>EVENTS</Text>
+                </View>
             </View>
 
             {/* Event List */}
@@ -107,8 +100,9 @@ const EventCard = ({ date, title, time, location }) => {
             </View>
             <View style={styles.eventDetails}>
                 <Text style={styles.eventTitle}>{title}</Text>
-                <Text style={styles.eventInfo}>{time}</Text>
-                <Text style={styles.eventInfo}>{location}</Text>
+                <Text style={styles.eventInfo}>
+                    {time} - {location}
+                </Text>
             </View>
         </View>
     );
@@ -118,77 +112,97 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
-        backgroundColor: "rgba(38, 50, 56, 0.8)", // Semi-transparent background
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    time: {
-        color: "#FFF",
-        fontSize: 16,
-        fontWeight: "bold",
-        fontFamily: "Roboto", // Replace with your font name if needed
-    },
-    statusIcons: {
-        flexDirection: "row",
-        gap: 8,
-    },
+    header: { height: 40, backgroundColor: "transparent" },
     titleContainer: {
         marginTop: 20,
         paddingHorizontal: 16,
+        alignItems: "center", // Centers the content horizontally
+    },
+    highlightsContainer: {
+        flexDirection: "row", // Arrange items in a row
+        justifyContent: "center", // Center items horizontally
+        alignItems: "center", // Align items vertically
+        marginTop: -10,
     },
     title: {
-        fontSize: 24,
+        fontSize: 45, // Larger font size
         fontWeight: "bold",
         color: "#8D2424",
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
+        textAlign: "center", // Center align the text
+        textShadowColor: "#000", // Add shadow color
+        textShadowOffset: { width: 1, height: 1 }, // Add shadow offset
+        textShadowRadius: 2, // Add shadow radius
+    },
+    highlightSmall: {
+        fontSize: 25, // Smaller font size for "OF"
+        fontWeight: "bold",
+        color: "#8D2424",
+        textShadowColor: "#000", // Add shadow color
+        textShadowOffset: { width: 1, height: 1 }, // Add shadow offset
+        textShadowRadius: 2, // Add shadow radius
+        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
+        marginRight: 4, // Add space between "OF" and "EVENTS"
+        marginTop: 15,
     },
     highlight: {
-        color: "#FF5722",
+        fontSize: 45, // Larger font size
+        fontWeight: "bold",
+        color: "#8D2424",
+        fontFamily: "Source-Sans-Pro-Bold",
+        textAlign: "center",
+        textShadowColor: "#000",
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
     },
     eventList: {
         padding: 16,
     },
     eventContainer: {
         flexDirection: "row",
-        marginBottom: 16, // Space between events
+        marginBottom: 16,
+        alignItems: "center",
     },
     dateContainer: {
         backgroundColor: "#1f2a50",
-        borderRadius: 8,
+        borderRadius: 15,
         padding: 10,
         justifyContent: "center",
         alignItems: "center",
         marginRight: 16,
-        borderRadius: 15,
+        width: 90,
     },
     monthText: {
         color: "#FFF",
         fontWeight: "bold",
-        fontSize: 18,
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontSize: 30,
+        fontFamily: "Source-Sans-Pro-Bold",
     },
     dayText: {
         color: "#FFF",
-        fontSize: 14,
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontWeight: "bold",
+        fontSize: 25,
+        fontFamily: "Source-Sans-Pro-Bold",
     },
     eventDetails: {
         flex: 1,
+        justifyContent: "center",
+        alignItems: "flex-start",
     },
     eventTitle: {
         fontWeight: "bold",
-        fontSize: 16,
+        fontSize: 23,
         color: "#8D2424",
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontFamily: "Source-Sans-Pro-Bold",
+        textShadowColor: "#ca9b65",
+        textShadowOffset: { width: 3, height: 3 },
+        textShadowRadius: 1,
     },
     eventInfo: {
-        color: "#757575",
-        fontSize: 14,
-        fontFamily: "Roboto", // Replace with your font name if needed
+        color: "#8D2424",
+        fontSize: 17,
+        fontWeight: "bold",
+        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
     },
 });
 
