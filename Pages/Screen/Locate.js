@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons"; // Importing an icon set for simplicity
 
 const Locate = ({ route }) => {
-  // Check if latitude and longitude are passed
   const { latitude, longitude } = route.params || {}; // Destination latitude and longitude
   const [userLocation, setUserLocation] = useState(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]); // Stores the decoded polyline coordinates
@@ -14,14 +13,11 @@ const Locate = ({ route }) => {
   // Function to decode a polyline string into coordinates
   const decodePolyline = (encoded) => {
     let points = [];
-    let index = 0,
-      len = encoded.length;
-    let lat = 0,
-      lng = 0;
+    let index = 0, len = encoded.length;
+    let lat = 0, lng = 0;
 
     while (index < len) {
-      let b, shift = 0,
-        result = 0;
+      let b, shift = 0, result = 0;
       do {
         b = encoded.charCodeAt(index++) - 63;
         result |= (b & 0x1f) << shift;
@@ -46,18 +42,13 @@ const Locate = ({ route }) => {
   };
 
   useEffect(() => {
-    if (!latitude || !longitude) {
-      return; // If no destination coordinates are provided, do nothing
-    }
+    if (!latitude || !longitude) return;
 
     const fetchUserLocationAndRoute = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
-        const currentLocation = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
+        const currentLocation = { latitude: location.coords.latitude, longitude: location.coords.longitude };
         setUserLocation(currentLocation);
 
         // Fetch route polyline from Google Maps Directions API
@@ -91,28 +82,42 @@ const Locate = ({ route }) => {
             initialRegion={{
               latitude: userLocation.latitude,
               longitude: userLocation.longitude,
-              latitudeDelta: 0.001,
-              longitudeDelta: 0.001,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
             }}
             mapType="hybrid"
           >
-            {/* User Location Marker */}
-            <Marker coordinate={userLocation} title="Your Location" />
+            {/* User Location Marker with custom style */}
+            <Marker
+              coordinate={userLocation}
+              title="Your Location"
+              pinColor="#1E90FF" // Custom color for user marker (DodgerBlue)
+              strokeWidth={6}
+            >
+              <MaterialIcons name="person-pin-circle" size={30} color="#FFFFFF" />
+            </Marker>
 
-            {/* Destination Marker */}
-            <Marker coordinate={{ latitude, longitude }} title="Selected Location" />
+            {/* Destination Marker with custom style */}
+            <Marker
+              coordinate={{ latitude, longitude }}
+              title="Selected Location"
+              pinColor="#32CD32" // Custom color for destination marker (LimeGreen)
+            >
+              <MaterialIcons name="place" size={30} color="#FFFFFF" />
+            </Marker>
 
-            {/* Route Polyline */}
+            {/* Route Polyline (Dotted Line) */}
             {routeCoordinates.length > 0 && (
               <Polyline
                 coordinates={routeCoordinates}
-                strokeWidth={4}
-                strokeColor="blue"
+                strokeWidth={8}
+                strokeColor="#1E90FF" // Custom color for the polyline (DodgerBlue)
+                lineDashPattern={[5, 10]} // Adding dashed pattern for the polyline
               />
             )}
           </MapView>
         ) : (
-          <Text>Loading your location...</Text>
+          <Text style={styles.loadingText}>Loading your location...</Text>
         )
       ) : (
         <View style={styles.messageContainer}>
@@ -125,30 +130,38 @@ const Locate = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5", // Light background for the container
   },
-  map: { 
-    flex: 1 
+  map: {
+    flex: 1,
   },
   messageContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255, 99, 71, 0.1)", // Light background for visibility
-    padding: 10,
-    justifyContent: 'center',
-    borderRadius: 8,
-    elevation: 2, // Light shadow effect
+    padding: 15,
+    justifyContent: "center",
+    borderRadius: 10,
     margin: 20,
+    elevation: 5, // Light shadow effect
   },
   icon: {
-    marginRight: 8,
+    marginRight: 10,
   },
   messageText: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#ff6347", // Vibrant text color
+  },
+  loadingText: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#ff6347", // Text color
+    fontWeight: "bold",
+    color: "#333", // Text color for loading
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 

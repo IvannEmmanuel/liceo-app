@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
-    View,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Image,
-    ActivityIndicator,
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Animated,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -14,255 +20,249 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 const Map = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [userLocation, setUserLocation] = useState(null);
-    const [infoHeader, setInfoHeader] = useState("");
-    const [isLoading, setIsLoading] = useState(true); // For loading state
-    const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [infoHeader, setInfoHeader] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-    const locations = [
-        {
-            name: "Pharmacy Office",
-            latitude: 8.485858,
-            longitude: 124.639341,
-            description:
-                "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
-            image: require("../../Images/castle.jpg"),
-        },
-        {
-            name: "Next Moves Dance Company",
-            latitude: 8.485452,
-            longitude: 124.639237,
-            description:
-                "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
-            image: require("../../Images/castle.jpg"),
-        },
-        {
-            name: "Kabina",
-            latitude: 8.504217,
-            longitude: 124.644259,
-            description:
-                "Approximate time and distance from your current location. Click the “LOCATE” button to start navigating.",
-            image: require("../../Images/castle.jpg"),
-        },
-    ];
+  const navigation = useNavigation();
+  const [animation] = useState(new Animated.Value(0));
+  const [subContainerAnimation] = useState(new Animated.Value(0));
 
-    // Simulate a delay after navigation to show the loading screen
-    useEffect(() => {
-        const initializeMap = async () => {
-            setIsLoading(true); // Show loading screen
-            try {
-                const { status } =
-                    await Location.requestForegroundPermissionsAsync();
-                if (status === "granted") {
-                    const location = await Location.getCurrentPositionAsync({});
-                    setUserLocation({
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                    });
-                } else {
-                    console.error("Location permission denied");
-                }
-            } catch (error) {
-                console.error("Error getting location: ", error);
-            } finally {
-                setTimeout(() => setIsLoading(false), 2000); // Add artificial delay (optional)
-            }
-        };
-        initializeMap();
-    }, []);
+  const [region, setRegion] = useState({
+    latitude: 8.485858,
+    longitude: 124.639341,
+    latitudeDelta: 0.001,
+    longitudeDelta: 0.001,
+  });
 
-    const handleSearch = () => {
-        const query = searchQuery.toLowerCase();
-        const foundLocation = locations.find(
-            (location) => location.name.toLowerCase() === query
-        );
-        if (foundLocation) {
-            setSelectedLocation(foundLocation);
-            setInfoHeader(searchQuery.toUpperCase());
+  const locations = [
+    {
+      name: "Pharmacy Office",
+      latitude: 8.485858,
+      longitude: 124.639341,
+      description:
+        "Approximate time and distance from your current location. Click the 'LOCATE' button to start navigating.",
+      fullDescription:
+        "The Pharmacy Office provides essential medical supplies and prescriptions to the local community. Our experienced staff offers professional pharmaceutical services and guidance. We maintain a comprehensive inventory of medications and health-related products to meet your healthcare needs.",
+      operatingHours:
+        "Monday - Friday: 8:00 AM - 5:00 PM\nSaturday: 9:00 AM - 2:00 PM",
+      contact: "(123) 456-7890",
+      email: "pharmacy@example.com",
+      images: [
+        require("../../Images/pharmacy1.jpg"),
+        require("../../Images/pharmacy2.jpg"),
+        require("../../Images/pharmacy3.jpg"),
+        require("../../Images/pharmacy4.jpg"),
+      ],
+    },
+    {
+      name: "Next Moves Dance Company",
+      latitude: 8.485452,
+      longitude: 124.639237,
+      description:
+        "Approximate time and distance from your current location. Click the 'LOCATE' button to start navigating.",
+      fullDescription:
+        "Next Moves Dance Company is a premier dance studio offering various dance styles and classes for all ages and skill levels. Our professional instructors are dedicated to helping you achieve your dancing goals in a fun and supportive environment.",
+      operatingHours: "Monday - Saturday: 9:00 AM - 8:00 PM",
+      contact: "(123) 456-7891",
+      email: "nextmoves@example.com",
+      images: [
+        require("../../Images/dance1.jpg"),
+        require("../../Images/dance2.jpg"),
+        require("../../Images/dance3.jpg"),
+        require("../../Images/dance4.jpg"),
+      ],
+    },
+    {
+      name: "Kabina",
+      latitude: 8.504217,
+      longitude: 124.644259,
+      description:
+        "Approximate time and distance from your current location. Click the 'LOCATE' button to start navigating.",
+      fullDescription:
+        "Kabina offers a unique dining experience with a blend of traditional and modern cuisine. Our restaurant features locally sourced ingredients and a carefully curated menu that changes seasonally. Enjoy the warm atmosphere and exceptional service.",
+      operatingHours: "Daily: 11:00 AM - 10:00 PM",
+      contact: "(123) 456-7892",
+      email: "kabina@example.com",
+      images: [
+        require("../../Images/kabina1.jpg"),
+        require("../../Images/kabina2.jpg"),
+        require("../../Images/kabina3.jpg"),
+        require("../../Images/kabina4.jpg"),
+      ],
+    },
+  ];
+
+  useEffect(() => {
+    const initializeMap = async () => {
+      setIsLoading(true);
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === "granted") {
+          const location = await Location.getCurrentPositionAsync({});
+          setUserLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
         } else {
-            setSelectedLocation(null);
-            setInfoHeader("");
+          console.error("Location permission denied");
         }
+      } catch (error) {
+        console.error("Error getting location: ", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    const handleLocate = () => {
-        if (selectedLocation) {
-            navigation.navigate("Locate", {
-                latitude: selectedLocation.latitude,
-                longitude: selectedLocation.longitude,
-            });
-        }
-    };
+    initializeMap();
 
-    return (
-        <View style={styles.container}>
-            {isLoading ? (
-                // Loading screen with Activity Indicator
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#761d1d" />
-                    <Text style={styles.loadingText}>Loading map...</Text>
-                </View>
-            ) : (
-                <>
-                    {/* Map View */}
-                    {userLocation && (
-                        <MapView
-                            style={styles.map}
-                            initialRegion={{
-                                latitude: userLocation.latitude,
-                                longitude: userLocation.longitude,
-                                latitudeDelta: 0.001,
-                                longitudeDelta: 0.001,
-                            }}
-                            mapType="hybrid"
-                        >
-                            {/* User Location Marker */}
-                            <Marker
-                                coordinate={userLocation}
-                                title="Your Location"
-                                description="This is where you are"
-                            />
-
-                            {/* Searched Location Marker */}
-                            {selectedLocation && (
-                                <Marker
-                                    coordinate={{
-                                        latitude: selectedLocation.latitude,
-                                        longitude: selectedLocation.longitude,
-                                    }}
-                                    title={selectedLocation.name}
-                                    description={selectedLocation.description}
-                                />
-                            )}
-                        </MapView>
-                    )}
-
-                    {/* Search Bar */}
-                    <View style={styles.searchBar}>
-                        <Icon
-                            name="search"
-                            size={20}
-                            color="#888"
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            placeholder="Search for a destination"
-                            style={styles.inputLoc}
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            onSubmitEditing={handleSearch}
-                            returnKeyType="search"
-                        />
-                    </View>
-
-                    {/* Location Details */}
-                    {selectedLocation && (
-                        <View style={styles.infoContainer}>
-                            <Image
-                                source={selectedLocation.image}
-                                style={styles.locationImage}
-                                resizeMode="cover"
-                            />
-                            <Text style={styles.infoHeader}>{infoHeader}</Text>
-                            <View style={styles.descriptionContainer}>
-                                <Text style={styles.infoText}>
-                                    {selectedLocation.description}
-                                </Text>
-                                <TouchableOpacity style={styles.viewContainer}>
-                                    <Text style={styles.viewText}>
-                                        View Full Information {">"}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <TouchableOpacity
-                                style={styles.locateButton}
-                                onPress={handleLocate}
-                            >
-                                <Text style={styles.buttonText}>Locate</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </>
-            )}
-        </View>
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
     );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const foundLocation = locations.find(
+      (location) => location.name.toLowerCase() === query
+    );
+    if (foundLocation) {
+      setSelectedLocation(foundLocation);
+      setInfoHeader(searchQuery.toUpperCase());
+      setIsExpanded(false);
+      setCurrentImageIndex(0);
+    } else {
+      setSelectedLocation(null);
+      setInfoHeader("");
+    }
+    Keyboard.dismiss();
+  };
+
+  const toggleExpanded = () => setIsExpanded(!isExpanded);
+
+  const handleNextImage = () => {
+    if (selectedLocation) {
+      setCurrentImageIndex(
+        (currentImageIndex + 1) % selectedLocation.images.length
+      );
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <MapView style={styles.map} region={region}>
+          {userLocation && (
+            <Marker
+              coordinate={userLocation}
+              title="Your Location"
+              description="This is where you are"
+            />
+          )}
+          {locations.map((location, index) => (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title={location.name}
+              description={location.description}
+            />
+          ))}
+        </MapView>
+      )}
+      <View style={styles.overlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <TextInput
+            style={styles.input}
+            placeholder="Search location"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+            <Text style={styles.buttonText}>Search</Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+        {selectedLocation && (
+          <Animated.View style={[styles.infoContainer, { opacity: animation }]}>
+            <ScrollView>
+              <Text style={styles.infoHeader}>{infoHeader}</Text>
+              <Image
+                source={selectedLocation.images[currentImageIndex]}
+                style={styles.image}
+              />
+              <TouchableOpacity onPress={handleNextImage}>
+                <Text style={styles.nextImageText}>Next Image</Text>
+              </TouchableOpacity>
+              <Text style={styles.infoText}>
+                {isExpanded
+                  ? selectedLocation.fullDescription
+                  : selectedLocation.description}
+              </Text>
+              <TouchableOpacity onPress={toggleExpanded}>
+                <Text style={styles.toggleButton}>
+                  {isExpanded ? "See Less" : "See More"}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Animated.View>
+        )}
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    loadingText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: "#555",
-    },
-    container: {
-        flex: 1,
-    },
-    map: {
-        flex: 1,
-    },
-    searchBar: {
-        position: "absolute",
-        top: 30,
-        left: 10,
-        right: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#f1eee7",
-        padding: 10,
-        borderRadius: 10,
-        elevation: 3,
-        zIndex: 10,
-    },
-    inputLoc: {
-        flex: 1,
-        marginLeft: 10,
-    },
-    icon: {
-        marginRight: 5,
-    },
-    infoContainer: {
-        position: "absolute",
-        bottom: 40,
-        left: 40,
-        right: 10,
-        backgroundColor: "#fff",
-        elevation: 5,
-        width: "80%",
-        borderRadius: 25,
-    },
-    locationImage: {
-        width: "100%",
-        height: 150,
-        borderRadius: 25,
-    },
-    infoHeader: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 5,
-        backgroundColor: "#f9b210",
-        textAlign: "center",
-        lineHeight: 40,
-    },
-    infoText: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    locateButton: {
-        padding: 10,
-        backgroundColor: "#007bff",
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: "#fff",
-        textAlign: "center",
-    },
+  container: { flex: 1 },
+  map: { flex: 1 },
+  overlay: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+  },
+  input: { padding: 8, borderBottomWidth: 1, marginBottom: 10 },
+  searchButton: {
+    backgroundColor: "#3498db",
+    padding: 10,
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  buttonText: { color: "white", fontWeight: "bold" },
+  infoContainer: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  infoHeader: { fontWeight: "bold", fontSize: 16 },
+  image: { width: "100%", height: 200, marginBottom: 10 },
+  nextImageText: { color: "#3498db", textAlign: "center", marginBottom: 10 },
+  infoText: { fontSize: 14 },
+  toggleButton: { color: "#3498db", marginTop: 10 },
 });
 
 export default Map;
