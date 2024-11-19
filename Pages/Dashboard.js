@@ -68,7 +68,7 @@ const Dashboard = () => {
           const iconColor = focused ? "#F2F2F2" : "#f9b210";
 
           // Adjust the size based on focus
-          const iconSize = focused ? size * 1.3 : size;
+          const iconSize = focused ? size * 1.3 : 30;
 
           return (
             <View
