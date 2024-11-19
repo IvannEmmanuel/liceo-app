@@ -5,10 +5,11 @@ import {
     View,
     ScrollView,
     ImageBackground,
+    Image,
     TouchableOpacity,
 } from "react-native";
-import loadFonts from "../../Style/load"; // Assuming you have this utility to load fonts
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import loadFonts from "../../Style/load";
 
 const Notification = () => {
     const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -16,22 +17,14 @@ const Notification = () => {
     // Event data
     const events = [
         {
-            title: "THANKSGIVING MASS",
+            id: 1,
+            title: "ANNOUNCEMENT! 70th FOUNDING ANNIVERSARY",
             time: "8 - 10 AM",
             location: "LDCU MAIN CAMPUS",
         },
         {
-            title: "MUSIK ADELANTE",
-            time: "12 - 3 PM",
-            location: "LDCU MAIN CAMPUS",
-        },
-        {
-            title: "LICEO HELP BLOOD LETTING",
-            time: "3 - 5 PM",
-            location: "PASEO DEL RIO",
-        },
-        {
-            title: "LICEO U GAMES",
+            id: 2,
+            title: "LICEO GAMES 2024",
             time: "7 - 10 AM",
             location: "LDCU MAIN CAMPUS",
         },
@@ -56,27 +49,29 @@ const Notification = () => {
 
     return (
         <ImageBackground
-            source={require("../../Images/Calendar Background.jpg")} // Replace with your image path
+            source={require("../../Images/Calendar Background.jpg")}
             style={styles.container}
             resizeMode="cover"
         >
-            {/* Header */}
-            <View style={styles.header}></View>
             {/* Title */}
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>
-                    NOTIFICATIONS <Text style={styles.highlight}>ALERTS</Text>
-                </Text>
+                <Image
+                    source={require("../../Images/megaphone-black.png")}
+                    style={styles.megaphoneIcon}
+                />
+                <View style={styles.textContainer}>
+                    <Text style={styles.title}>NOTIFICATIONS</Text>
+                    <Text style={styles.title}>CENTER</Text>
+                </View>
             </View>
 
             {/* Event List */}
             <ScrollView contentContainerStyle={styles.eventList}>
-                {events.map((event, index) => (
+                {events.map((event) => (
                     <NotificationCard
-                        key={index}
+                        key={event.id}
+                        id={event.id}
                         title={event.title}
-                        time={event.time}
-                        location={event.location}
                     />
                 ))}
             </ScrollView>
@@ -84,124 +79,99 @@ const Notification = () => {
     );
 };
 
-const NotificationCard = ({ title, time, location }) => {
-    const [isMuted, setIsMuted] = useState(false); // State to track mute status
-    const [isDismissed, setIsDismissed] = useState(false); // State to track dismissal
+const NotificationCard = ({ id, title }) => {
+    const navigation = useNavigation(); // Hook for navigation
 
-    const toggleMute = () => {
-        setIsMuted((prevMuted) => !prevMuted); // Toggle the mute state
+    const handlePress = () => {
+        if (id === 1) {
+            navigation.navigate("Founding"); // Navigate to Founding screen
+        } else if (id === 2) {
+            navigation.navigate("LiceoGames"); // Navigate to LiceoGames screen
+        }
     };
-
-    const dismissNotification = () => {
-        setIsDismissed(true); // Mark the notification as dismissed
-    };
-
-    if (isDismissed) {
-        return null; // If dismissed, return null to hide the notification
-    }
 
     return (
-        <View style={styles.notificationContainer}>
-            <View style={styles.iconContainer}>
-                <Icon
-                    name={isMuted ? "bell-off" : "bell-ring"} // Change icon based on mute state
-                    size={40}
-                    color={isMuted ? "#B0BEC5" : "#FF9800"} // Muted icon is gray, unmuted is orange
-                    onPress={toggleMute} // Toggle mute on press
-                />
+        <View style={styles.notificationWrapper}>
+            <View style={styles.notificationContainer}>
+                <View style={styles.iconContainer}>
+                    <Image
+                        source={require("../../Images/liceo-maroon.png")}
+                        style={styles.liceoIcon}
+                    />
+                </View>
+                <View style={styles.notificationDetails}>
+                    <Text style={styles.eventTitle}>{title}</Text>
+                </View>
             </View>
-            <View style={styles.notificationDetails}>
-                <Text style={styles.eventTitle}>{title}</Text>
-                <Text style={styles.eventInfo}>{time}</Text>
-                <Text style={styles.eventInfo}>{location}</Text>
-                <TouchableOpacity
-                    style={styles.dismissButton}
-                    onPress={dismissNotification}
-                >
-                    <Text style={styles.dismissText}>Dismiss</Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={styles.touchableBar} onPress={handlePress}>
+                <Text style={styles.touchableText}>VIEW EVENT DETAILS</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    header: { height: 40, backgroundColor: "transparent" },
-    time: {
-        color: "#FFF",
-        fontSize: 16,
-        fontWeight: "bold",
-        fontFamily: "Roboto", // Replace with your font name if needed
-    },
-    statusIcons: {
-        flexDirection: "row",
-        gap: 8,
-    },
+    // Style definitions remain unchanged
+    container: { flex: 1 },
     titleContainer: {
-        marginTop: 20,
+        marginVertical: 50,
         paddingHorizontal: 16,
+        flexDirection: "row",
+        alignItems: "center",
     },
+    megaphoneIcon: { width: 90, height: 90, marginRight: 10 },
+    liceoIcon: { width: 90, height: 90 },
+    textContainer: { flexDirection: "column" },
     title: {
-        fontSize: 24,
+        fontSize: 35,
         fontWeight: "bold",
         color: "#8D2424",
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontFamily: "Source-Sans-Pro-Bold",
+        textAlign: "center",
     },
-    highlight: {
-        color: "#FF5722",
-    },
-    eventList: {
-        padding: 16,
-    },
+    eventList: { padding: 16 },
+    notificationWrapper: { marginBottom: 40 },
     notificationContainer: {
         flexDirection: "row",
-        marginBottom: 16, // Space between notifications
         padding: 12,
-        backgroundColor: "#FFF",
-        borderRadius: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        paddingTop: 5,
+        backgroundColor: "#1f2a50",
+        borderRadius: 15,
         elevation: 4,
+        alignItems: "center",
     },
     iconContainer: {
-        backgroundColor: "#1f2a50",
         padding: 10,
         borderRadius: 8,
         justifyContent: "center",
         alignItems: "center",
-        marginRight: 16,
     },
     notificationDetails: {
         flex: 1,
-        position: "relative", // Added relative positioning
+        justifyContent: "center",
+        alignItems: "center",
     },
     eventTitle: {
         fontWeight: "bold",
-        fontSize: 16,
-        color: "#8D2424",
-        fontFamily: "Roboto", // Replace with your font name if needed
+        fontSize: 24,
+        color: "#fff",
+        fontFamily: "Source-Sans-Pro-Bold",
+        textAlign: "center",
     },
-    eventInfo: {
-        color: "#757575",
-        fontSize: 14,
-        fontFamily: "Roboto", // Replace with your font name if needed
+    touchableBar: {
+        width: "80%",
+        backgroundColor: "#737373",
+        padding: 10,
+        borderRadius: 15,
+        alignItems: "center",
+        alignSelf: "center",
+        marginTop: -10,
+        zIndex: -1, // Ensures the bar is below the notification container
     },
-    dismissButton: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        paddingVertical: 2,
-        paddingHorizontal: 4,
-    },
-    dismissText: {
-        color: "#8D2424", // Text color
-        fontSize: 12,
-        fontWeight: "bold",
+    touchableText: {
+        color: "#FFFFFF",
+        fontSize: 24,
+        fontFamily: "Poppins-Bold",
     },
 });
 

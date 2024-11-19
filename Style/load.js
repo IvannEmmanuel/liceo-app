@@ -9,6 +9,7 @@ const fetchFonts = async () => {
         "Anton-Regular": require("../assets/fonts/Anton-Regular.ttf"),
         "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
         "Source-Sans-Pro-Bold": require("../assets/fonts/SourceSansPro-Bold.ttf"),
+        "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     });
 };
 
