@@ -204,6 +204,7 @@ const Map = () => {
                     style={styles.map}
                     region={region} // Pass region to MapView
                     mapType="hybrid"
+                    coordinate={userLocation}
                     scrollEnabled={true} // Ensure the map is scrollable
                     zoomEnabled={true} // Allow zoom gestures
                     pitchEnabled={true} // Allow pitch gestures
