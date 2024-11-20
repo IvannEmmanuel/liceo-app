@@ -5,8 +5,11 @@ import {
     View,
     ScrollView,
     ImageBackground,
+    Dimensions,
 } from "react-native";
 import loadFonts from "../../Style/load";
+
+const { width, height } = Dimensions.get("window"); // Get device dimensions
 
 const Calendar = () => {
     const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -112,41 +115,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: { height: 40, backgroundColor: "transparent" },
+    header: { height: height * 0.05, backgroundColor: "transparent" },
     titleContainer: {
-        marginTop: 20,
-        paddingHorizontal: 16,
-        alignItems: "center", // Centers the content horizontally
+        marginTop: height * 0.02,
+        alignItems: "center",
     },
     highlightsContainer: {
-        flexDirection: "row", // Arrange items in a row
-        justifyContent: "center", // Center items horizontally
-        alignItems: "center", // Align items vertically
-        marginTop: -10,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: -height * 0.015,
     },
     title: {
-        fontSize: 45, // Larger font size
-        fontWeight: "bold",
-        color: "#8D2424",
-        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
-        textAlign: "center", // Center align the text
-        textShadowColor: "#000", // Add shadow color
-        textShadowOffset: { width: 1, height: 1 }, // Add shadow offset
-        textShadowRadius: 2, // Add shadow radius
-    },
-    highlightSmall: {
-        fontSize: 25, // Smaller font size for "OF"
-        fontWeight: "bold",
-        color: "#8D2424",
-        textShadowColor: "#000", // Add shadow color
-        textShadowOffset: { width: 1, height: 1 }, // Add shadow offset
-        textShadowRadius: 2, // Add shadow radius
-        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
-        marginRight: 4, // Add space between "OF" and "EVENTS"
-        marginTop: 15,
-    },
-    highlight: {
-        fontSize: 45, // Larger font size
+        fontSize: height * 0.05,
         fontWeight: "bold",
         color: "#8D2424",
         fontFamily: "Source-Sans-Pro-Bold",
@@ -155,43 +136,63 @@ const styles = StyleSheet.create({
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 2,
     },
+    highlightSmall: {
+        fontSize: height * 0.025,
+        fontWeight: "bold",
+        color: "#8D2424",
+        textShadowColor: "#000",
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+        fontFamily: "Source-Sans-Pro-Bold",
+        marginRight: width * 0.02,
+        marginTop: height * 0.015,
+    },
+    highlight: {
+        fontSize: height * 0.05,
+        fontWeight: "bold",
+        color: "#8D2424",
+        fontFamily: "Source-Sans-Pro-Bold",
+        textShadowColor: "#000",
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
+    },
     eventList: {
-        padding: 16,
+        padding: width * 0.04,
     },
     eventContainer: {
         flexDirection: "row",
-        marginBottom: 16,
+        marginBottom: height * 0.02,
         alignItems: "center",
     },
     dateContainer: {
         backgroundColor: "#1f2a50",
-        borderRadius: 15,
-        padding: 10,
+        borderRadius: width * 0.04,
+        padding: width * 0.03,
+        paddingHorizontal: width * 0.01,
         justifyContent: "center",
         alignItems: "center",
-        marginRight: 16,
-        width: 90,
+        marginRight: width * 0.04,
+        width: width * 0.2,
     },
     monthText: {
         color: "#FFF",
         fontWeight: "bold",
-        fontSize: 30,
+        fontSize: height * 0.03,
         fontFamily: "Source-Sans-Pro-Bold",
     },
     dayText: {
         color: "#FFF",
         fontWeight: "bold",
-        fontSize: 25,
+        fontSize: height * 0.025,
         fontFamily: "Source-Sans-Pro-Bold",
     },
     eventDetails: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "flex-start",
     },
     eventTitle: {
         fontWeight: "bold",
-        fontSize: 23,
+        fontSize: height * 0.028,
         color: "#8D2424",
         fontFamily: "Source-Sans-Pro-Bold",
         textShadowColor: "#ca9b65",
@@ -200,9 +201,9 @@ const styles = StyleSheet.create({
     },
     eventInfo: {
         color: "#8D2424",
-        fontSize: 17,
+        fontSize: height * 0.02,
         fontWeight: "bold",
-        fontFamily: "Source-Sans-Pro-Bold", // Replace with your font name if needed
+        fontFamily: "Source-Sans-Pro-Bold",
     },
 });
 

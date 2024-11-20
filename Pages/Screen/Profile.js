@@ -32,7 +32,7 @@ const Profile = () => {
             <ScrollView>
                 <View style={styles.profileContainer}>
                     <View style={styles.profileIconContainer}>
-                        <Icon name="account-circle" size={80} color="#FF9800" />
+                        <Icon name="account-circle" size={80} color="#761d1d" />
                         <View style={styles.editIcon}>
                             <Icon name="pencil" size={16} color="#FFF" />
                         </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         right: 0,
-        backgroundColor: "#FF9800",
+        backgroundColor: "#1f2a50",
         borderRadius: 12,
         padding: 4,
     },

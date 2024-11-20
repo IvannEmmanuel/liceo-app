@@ -1,23 +1,20 @@
+import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
     Text,
     View,
     TextInput,
     TouchableOpacity,
-    Alert,
     KeyboardAvoidingView,
     ScrollView,
     Platform,
     Image,
     Dimensions,
 } from "react-native";
-import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import loadFonts from "../../Style/load";
 
-
-// Get screen dimensions
 const { width, height } = Dimensions.get("window");
 
 const LoginPage = () => {
@@ -62,18 +59,18 @@ const LoginPage = () => {
                         <Text style={styles.headerText}>
                             LOGIN WITH CORPORATE ACCOUNT
                         </Text>
-                        <View style={styles.usernameRow}>
-                            <Text style={styles.usernameText}>Username:</Text>
-                            <TextInput style={styles.usernameInput} />
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Username:</Text>
+                            <TextInput style={styles.input} />
                         </View>
-                        <View style={styles.passwordRow}>
-                            <Text style={styles.passwordText}>Password:</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.label}>Password:</Text>
                             <TextInput
-                                style={styles.passwordInput}
+                                style={styles.input}
                                 secureTextEntry={true}
                             />
                         </View>
-                        <View style={styles.entervisitContainer}>
+                        <View style={styles.actionContainer}>
                             <TouchableOpacity
                                 style={styles.enterContainer}
                                 onPress={handleLogin}
@@ -93,28 +90,11 @@ const LoginPage = () => {
                             source={require("../../Images/liceo.png")}
                             style={styles.logo}
                         />
-                        <Text
-                            style={{
-                                fontFamily: "Roboto-Regular",
-                                color: "white",
-                            }}
-                        >
-                            Property Of
+                        <Text style={styles.footerText}>Property Of</Text>
+                        <Text style={styles.footerTextBold}>
+                            Grade 12 - STEM 30 (RESEARCH GROUP 1)
                         </Text>
-                        <Text
-                            style={{
-                                fontFamily: "Anton-Regular",
-                                color: "white",
-                            }}
-                        >
-                            Grade 12 - STEM 30 ( RESEARCH GROUP 1)
-                        </Text>
-                        <Text
-                            style={{
-                                fontFamily: "Roboto-Regular",
-                                color: "white",
-                            }}
-                        >
+                        <Text style={styles.footerText}>
                             Liceo de Cagayan University - Main Campus
                         </Text>
                     </View>
@@ -124,141 +104,7 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
-
 const styles = StyleSheet.create({
-    bottomContainer: {
-        alignItems: "center",
-        marginVertical: height * 0.02, // Adjust margin based on screen size
-    },
-    logo: {
-        width: width * 0.3, // Adjust width based on screen size
-        height: width * 0.3, // Adjust height based on screen size
-    },
-    visitorContainer: {
-        backgroundColor: "#761d1d",
-        borderRadius: 20,
-        justifyContent: "center",
-        alignItems: "center",
-        width: "60%",
-        height: 45,
-        alignSelf: "center",
-        marginVertical: 10,
-    },
-    visitorText: {
-        color: "#f9b210",
-        backgroundColor: "#761d1d",
-        fontSize: height * 0.03, // Adjust font size based on screen size
-        fontFamily: "Anton-Regular",
-        width: "100%",
-        height: 45,
-        textAlignVertical: "center",
-        alignSelf: "center",
-        textAlign: "center",
-        borderRadius: 20,
-    },
-    orText: {
-        color: "#f9b210",
-        fontSize: height * 0.03, // Adjust font size based on screen size
-        textAlign: "center",
-        fontFamily: "Anton-Regular",
-    },
-    enterContainer: {
-        color: "#f9b210",
-        backgroundColor: "#761d1d",
-        fontSize: height * 0.03, // Adjust font size based on screen size
-        fontFamily: "Anton-Regular",
-        height: 45,
-        textAlignVertical: "center",
-        width: "40%",
-        alignSelf: "center",
-        textAlign: "center",
-        borderRadius: 20,
-    },
-    enterText: {
-        color: "#f9b210",
-        backgroundColor: "#761d1d",
-        fontSize: height * 0.03, // Adjust font size based on screen size
-        fontFamily: "Anton-Regular",
-        height: 45,
-        textAlignVertical: "center",
-        width: "100%",
-        alignSelf: "center",
-        textAlign: "center",
-        borderRadius: 20,
-    },
-    passwordRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginVertical: height * 0.02, // Adjust margin based on screen size
-    },
-    passwordInput: {
-        backgroundColor: "#F2F2F2",
-        width: "50%",
-        height: 35,
-        borderRadius: 20,
-        paddingHorizontal: 10,
-        fontSize: height * 0.02, // Adjust font size based on screen size
-        fontWeight: "800",
-    },
-    passwordText: {
-        color: "#f9b210",
-        fontFamily: "Anton-Regular",
-        backgroundColor: "#761d1d",
-        textAlign: "center",
-        textAlignVertical: "center",
-        width: "30%",
-        height: 40,
-        borderRadius: 20,
-        marginRight: 10,
-        marginHorizontal: 25,
-    },
-    usernameRow: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    usernameInput: {
-        backgroundColor: "#F2F2F2",
-        width: "50%",
-        height: 35,
-        borderRadius: 20,
-        fontSize: height * 0.02, // Adjust font size based on screen size
-        fontWeight: "800",
-        paddingHorizontal: 10,
-    },
-    usernameText: {
-        color: "#f9b210",
-        fontFamily: "Anton-Regular",
-        backgroundColor: "#761d1d",
-        textAlign: "center",
-        textAlignVertical: "center",
-        width: "30%",
-        height: 40,
-        borderRadius: 20,
-        marginRight: 10,
-        marginHorizontal: 25,
-    },
-    headerText: {
-        color: "white",
-        fontSize: height * 0.03, // Adjust font size based on screen size
-        bottom: 10,
-        textAlign: "center",
-        fontFamily: "Anton-Regular",
-    },
-    loginContainer: {
-        backgroundColor: "#1f2a50",
-        width: "90%",
-        alignSelf: "center",
-        borderRadius: 30,
-        paddingVertical: height * 0.05, // Adjust padding based on screen size
-    },
-    welcomeText: {
-        bottom: 10,
-        textAlign: "center",
-        fontSize: height * 0.08, // Adjust font size based on screen size
-        fontFamily: "Anton-Regular",
-        color: "#f9b210",
-    },
     safeArea: {
         flex: 1,
     },
@@ -266,4 +112,100 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#761d1d",
     },
+    welcomeText: {
+        textAlign: "center",
+        fontSize: height * 0.06,
+        fontFamily: "Anton-Regular",
+        color: "#f9b210",
+    },
+    loginContainer: {
+        backgroundColor: "#1f2a50",
+        width: "90%",
+        alignSelf: "center",
+        borderRadius: 30,
+        padding: "5%",
+    },
+    headerText: {
+        color: "white",
+        fontSize: height * 0.028,
+        textAlign: "center",
+        fontFamily: "Anton-Regular",
+        marginBottom: height * 0.02,
+    },
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: height * 0.02,
+    },
+    label: {
+        color: "#f9b210",
+        fontFamily: "Anton-Regular",
+        backgroundColor: "#761d1d",
+        fontSize: height * 0.02,
+        textAlign: "center",
+        width: "30%",
+        paddingVertical: 10,
+        borderRadius: 20,
+    },
+    input: {
+        flex: 1,
+        backgroundColor: "#F2F2F2",
+        height: 40,
+        borderRadius: 20,
+        paddingLeft: 16,
+        fontSize: height * 0.02,
+    },
+    actionContainer: {
+        alignItems: "center",
+    },
+    enterContainer: {
+        backgroundColor: "#761d1d",
+        borderRadius: 20,
+        paddingVertical: 5,
+        paddingHorizontal: 35,
+        marginBottom: 10,
+    },
+    enterText: {
+        color: "#f9b210",
+        fontSize: height * 0.03,
+        fontFamily: "Anton-Regular",
+    },
+    orText: {
+        color: "#f9b210",
+        fontSize: height * 0.03,
+        fontFamily: "Anton-Regular",
+        marginBottom: 10,
+    },
+    visitorContainer: {
+        backgroundColor: "#761d1d",
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+    },
+    visitorText: {
+        color: "#f9b210",
+        fontSize: height * 0.025,
+        fontFamily: "Anton-Regular",
+    },
+    bottomContainer: {
+        alignItems: "center",
+        marginTop: height * 0.02,
+    },
+    logo: {
+        width: width * 0.3,
+        height: width * 0.3,
+        marginBottom: 10,
+    },
+    footerText: {
+        fontFamily: "Roboto-Regular",
+        color: "white",
+        textAlign: "center",
+    },
+    footerTextBold: {
+        fontFamily: "Anton-Regular",
+        color: "white",
+        textAlign: "center",
+    },
 });
+
+export default LoginPage;
