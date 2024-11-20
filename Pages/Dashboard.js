@@ -1,8 +1,10 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useState, useEffect } from "react";
+import loadFonts from "../Style/load";
 
 // Screens
 import Map from "./Screen/Map";
@@ -14,6 +16,25 @@ import Locate from "./Screen/Locate";
 const Tab = createBottomTabNavigator();
 
 const Dashboard = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        await loadFonts();
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error("Error loading fonts:", error);
+      }
+    };
+
+    load();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <Tab.Navigator
       initialRouteName="Map"
@@ -25,40 +46,53 @@ const Dashboard = () => {
           // Select icon based on the route name
           switch (route.name) {
             case "Map":
-              iconName = focused ? "map" : "map";
+              iconName = "map";
               break;
             case "Calendar":
-              iconName = focused ? "calendar" : "calendar";
+              iconName = "calendar";
               break;
             case "Notification":
-              iconName = focused ? "notifications" : "notifications";
+              iconName = "notifications";
               break;
             case "Profile":
-              iconName = focused ? "person" : "person";
+              iconName = "person";
               break;
             case "Locate":
-              iconName = focused ? "locate" : "locate";
+              iconName = "locate";
               break;
             default:
               iconName = "map"; // Default icon
           }
 
           // Set icon color based on focus state
-          const iconColor = focused ? "#f9f7f5" : "#f9b210"; // Color changes when selected or not
+          const iconColor = focused ? "#F2F2F2" : "#f9b210";
 
           // Adjust the size based on focus
-          const iconSize = focused ? size * 1.5 : size;
+          const iconSize = focused ? size * 1.3 : 30;
 
           return (
-            <View style={[styles.iconContainer, focused && styles.focusedIconContainer]}>
+            <View
+              style={[
+                styles.iconContainer,
+                focused && styles.focusedIconContainer,
+              ]}
+            >
               <Ionicons name={iconName} size={iconSize} color={iconColor} />
             </View>
           );
         },
-        tabBarStyle: { 
-          height: 60, 
-          paddingBottom: 5, 
-          backgroundColor: "#1f2a50",  // Set bottom tab bar color here
+        tabBarLabel: ({ focused }) => {
+          const fontSize = route.name === "Notification" ? 9.4 : 12;
+          return focused ? (
+            <Text style={[styles.tabBarLabel, { fontSize }]}>
+              {route.name.toUpperCase()}
+            </Text>
+          ) : null;
+        },
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 5,
+          backgroundColor: "#1f2a50", // Set bottom tab bar color here
         },
       })}
     >
@@ -77,6 +111,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 20,
     width: 50,
     height: 50,
   },
@@ -86,5 +121,11 @@ const styles = StyleSheet.create({
     marginTop: -20,
     width: 50,
     height: 50,
+  },
+  tabBarLabel: {
+    color: "#f9b210",
+    fontFamily: 'Poppins-Bold',
+    top: 5,
+    textAlign: "center",
   },
 });
