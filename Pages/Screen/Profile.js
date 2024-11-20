@@ -32,7 +32,7 @@ const Profile = () => {
             <ScrollView>
                 <View style={styles.profileContainer}>
                     <View style={styles.profileIconContainer}>
-                        <Icon name="account-circle" size={80} color="#FF9800" />
+                        <Icon name="account-circle" size={80} color="#761d1d" />
                         <View style={styles.editIcon}>
                             <Icon name="pencil" size={16} color="#FFF" />
                         </View>
@@ -69,7 +69,18 @@ const Profile = () => {
                     ))}
                     <View style={styles.row}>
                         <View style={styles.rowContent}>
-                            <Icon name="bell-off" size={24} color="#263238" />
+                            {/* Volume Icon Container */}
+                            <View style={styles.iconContainer}>
+                                <Icon
+                                    name={
+                                        silentMode
+                                            ? "volume-off"
+                                            : "volume-high"
+                                    }
+                                    size={24}
+                                    color="#FFF"
+                                />
+                            </View>
                             <View style={styles.textContainer}>
                                 <Text style={styles.rowTitle}>Silent Mode</Text>
                                 <Text style={styles.rowSubtitle}>
@@ -131,7 +142,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         right: 0,
-        backgroundColor: "#FF9800",
+        backgroundColor: "#1f2a50",
         borderRadius: 12,
         padding: 4,
     },
