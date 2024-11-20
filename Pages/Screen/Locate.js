@@ -64,7 +64,7 @@ const Locate = ({ route }) => {
         setUserLocation(currentLocation);
 
         // Fetch route polyline from Google Maps Directions API
-        const API_KEY = "AlzaSy-Yy3WwWuCy4umW2tT9bfaaBVO8Al1P-5m"; // Replace with a secure method to load the API key
+        const API_KEY = "AlzaSyJ-7bx94F4YsL44lzOqdUXgClf2ach4mRo"; // Replace with a secure method to load the API key
         const origin = `${currentLocation.latitude},${currentLocation.longitude}`;
         const destination = `${latitude},${longitude}`;
         const url = `https://maps.gomaps.pro/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${API_KEY}`;
