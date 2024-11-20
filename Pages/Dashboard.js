@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Modal } from "react-native";
+import { StyleSheet, View, Text, Modal, Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import loadFonts from "../Style/load";
@@ -13,6 +13,9 @@ import Locate from "./Screen/Locate";
 import NotificationContext from "./components/NotificationContext"; // Adjust path as necessary
 
 const Tab = createBottomTabNavigator();
+
+// Get screen width and height for responsiveness
+const { width, height } = Dimensions.get("window");
 
 const Dashboard = () => {
     const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -96,7 +99,7 @@ const Dashboard = () => {
                         const iconColor = focused ? "#F2F2F2" : "#f9b210";
 
                         // Adjust the size based on focus
-                        const iconSize = focused ? size * 1.3 : 30;
+                        const iconSize = focused ? size * 1.3 : width * 0.07; // Adjust size with a fraction of the screen width
 
                         return (
                             <View
@@ -114,8 +117,8 @@ const Dashboard = () => {
                         );
                     },
                     tabBarLabel: ({ focused }) => {
-                        const fontSize =
-                            route.name === "Notification" ? 9.4 : 12;
+                        // Use responsive font size for the label
+                        const fontSize = width * 0.02; // 2% of screen width for font size
                         return focused ? (
                             <Text style={[styles.tabBarLabel, { fontSize }]}>
                                 {route.name.toUpperCase()}
@@ -123,7 +126,7 @@ const Dashboard = () => {
                         ) : null;
                     },
                     tabBarStyle: {
-                        height: 60,
+                        height: height * 0.08, // 8% of screen height for the tab bar height
                         paddingBottom: 5,
                         backgroundColor: "#1f2a50", // Set bottom tab bar color here
                     },
@@ -162,21 +165,21 @@ const styles = StyleSheet.create({
     iconContainer: {
         alignItems: "center",
         justifyContent: "center",
-        marginTop: 20,
-        width: 50,
-        height: 50,
+        marginTop: height * 0.02, // Adjust icon container top margin based on screen height
+        width: width * 0.12, // Adjust width of icon container based on screen width
+        height: width * 0.12, // Adjust height of icon container based on screen width
     },
     focusedIconContainer: {
         backgroundColor: "#761d1d",
-        borderRadius: 25,
-        marginTop: -20,
-        width: 50,
-        height: 50,
+        borderRadius: width * 0.06, // Half of the icon container width for rounded effect
+        marginTop: -height * 0.015, // Adjust vertical margin for focus effect based on screen height
+        width: width * 0.12,
+        height: width * 0.12,
     },
     tabBarLabel: {
         color: "#f9b210",
         fontFamily: "Poppins-Bold",
-        top: 5,
+        top: height * 0.01, // Adjust vertical positioning based on screen height
         textAlign: "center",
     },
     modalBackground: {
@@ -184,6 +187,6 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start", // Aligns the modal view to the top
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
-        paddingTop: 50, // Adds padding from the top
+        paddingTop: height * 0.1, // Padding top adjusted based on screen height
     },
 });
