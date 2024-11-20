@@ -181,7 +181,7 @@ const Map = () => {
 
   const containerTop = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [height * 0.42, height * 0.43],
+    outputRange: [height * 0.42, height * 0.435],
   });
 
   return (
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
   expandedImage: {
     position: "absolute",
-    top: height * 0.14,
+    top: height * 0.15,
     height: height * 0.28,
     width: width * 0.9,
     borderRadius: width * 0.025,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   pickerPicture: {
     bottom: height * 0.02,
     width: width * 0.9,
-    top: height * 0.75,
+    top: height * 0.755,
     height: height * 0.12,
     backgroundColor: "#1f2a50",
     borderRadius: width * 0.025,
