@@ -69,7 +69,18 @@ const Profile = () => {
                     ))}
                     <View style={styles.row}>
                         <View style={styles.rowContent}>
-                            <Icon name="bell-off" size={24} color="#263238" />
+                            {/* Volume Icon Container */}
+                            <View style={styles.iconContainer}>
+                                <Icon
+                                    name={
+                                        silentMode
+                                            ? "volume-off"
+                                            : "volume-high"
+                                    }
+                                    size={24}
+                                    color="#FFF"
+                                />
+                            </View>
                             <View style={styles.textContainer}>
                                 <Text style={styles.rowTitle}>Silent Mode</Text>
                                 <Text style={styles.rowSubtitle}>
