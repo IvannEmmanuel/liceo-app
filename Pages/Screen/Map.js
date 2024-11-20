@@ -352,9 +352,9 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
     padding: 20,
     position: "absolute",
+    alignSelf: 'center',
   },
   textInput: {
     width: "90%",
