@@ -7,11 +7,13 @@ import {
     ImageBackground,
     Image,
     TouchableOpacity,
+    useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 import loadFonts from "../../Style/load";
 
 const Notification = () => {
+    const { width, height } = useWindowDimensions(); // Get device dimensions
     const [fontsLoaded, setFontsLoaded] = useState(false);
 
     // Event data
@@ -50,18 +52,30 @@ const Notification = () => {
     return (
         <ImageBackground
             source={require("../../Images/Calendar Background.jpg")}
-            style={styles.container}
+            style={[styles.container, { width, height }]}
             resizeMode="cover"
         >
             {/* Title */}
-            <View style={styles.titleContainer}>
+            <View
+                style={[
+                    styles.titleContainer,
+                    { marginVertical: height * 0.05 },
+                ]}
+            >
                 <Image
                     source={require("../../Images/megaphone-black.png")}
-                    style={styles.megaphoneIcon}
+                    style={[
+                        styles.megaphoneIcon,
+                        { width: width * 0.2, height: height * 0.09 },
+                    ]}
                 />
                 <View style={styles.textContainer}>
-                    <Text style={styles.title}>NOTIFICATIONS</Text>
-                    <Text style={styles.title}>CENTER</Text>
+                    <Text style={[styles.title, { fontSize: width * 0.08 }]}>
+                        NOTIFICATIONS
+                    </Text>
+                    <Text style={[styles.title, { fontSize: width * 0.08 }]}>
+                        CENTER
+                    </Text>
                 </View>
             </View>
 
@@ -72,6 +86,8 @@ const Notification = () => {
                         key={event.id}
                         id={event.id}
                         title={event.title}
+                        width={width}
+                        height={height}
                     />
                 ))}
             </ScrollView>
@@ -79,7 +95,7 @@ const Notification = () => {
     );
 };
 
-const NotificationCard = ({ id, title }) => {
+const NotificationCard = ({ id, title, width, height }) => {
     const navigation = useNavigation(); // Hook for navigation
 
     const handlePress = () => {
@@ -91,39 +107,70 @@ const NotificationCard = ({ id, title }) => {
     };
 
     return (
-        <View style={styles.notificationWrapper}>
-            <View style={styles.notificationContainer}>
+        <View
+            style={[
+                styles.notificationWrapper,
+                { marginBottom: height * 0.05 },
+            ]}
+        >
+            <View
+                style={[
+                    styles.notificationContainer,
+                    { padding: width * 0.03, paddingTop: height * 0.015 },
+                ]}
+            >
+                {/* Icon */}
                 <View style={styles.iconContainer}>
                     <Image
                         source={require("../../Images/liceo-maroon.png")}
-                        style={styles.liceoIcon}
+                        style={[
+                            styles.liceoIcon,
+                            { width: width * 0.2, height: height * 0.1 },
+                        ]}
                     />
                 </View>
                 <View style={styles.notificationDetails}>
-                    <Text style={styles.eventTitle}>{title}</Text>
+                    <Text
+                        style={[styles.eventTitle, { fontSize: width * 0.06 }]}
+                    >
+                        {title}
+                    </Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.touchableBar} onPress={handlePress}>
-                <Text style={styles.touchableText}>VIEW EVENT DETAILS</Text>
+
+            {/* Button to view event details */}
+            <TouchableOpacity
+                style={[
+                    styles.touchableBar,
+                    {
+                        width: width * 0.8,
+                        padding: width * 0.03,
+                        marginTop: -height * 0.016,
+                    },
+                ]}
+                onPress={handlePress}
+            >
+                <Text
+                    style={[styles.touchableText, { fontSize: width * 0.05 }]}
+                >
+                    VIEW EVENT DETAILS
+                </Text>
             </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    // Style definitions remain unchanged
     container: { flex: 1 },
     titleContainer: {
-        marginVertical: 50,
-        paddingHorizontal: 16,
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "center",
     },
-    megaphoneIcon: { width: 90, height: 90, marginRight: 10 },
-    liceoIcon: { width: 90, height: 90 },
-    textContainer: { flexDirection: "column" },
+    megaphoneIcon: { marginRight: 10, marginTop: 15 },
+    liceoIcon: { justifyContent: "center", alignItems: "center" },
+    textContainer: { flexDirection: "column", marginTop: 25 },
     title: {
-        fontSize: 35,
         fontWeight: "bold",
         color: "#8D2424",
         fontFamily: "Source-Sans-Pro-Bold",
@@ -133,16 +180,12 @@ const styles = StyleSheet.create({
     notificationWrapper: { marginBottom: 40 },
     notificationContainer: {
         flexDirection: "row",
-        padding: 12,
-        paddingTop: 5,
         backgroundColor: "#1f2a50",
         borderRadius: 15,
-        elevation: 4,
         alignItems: "center",
+        position: "relative",
     },
     iconContainer: {
-        padding: 10,
-        borderRadius: 8,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -153,24 +196,19 @@ const styles = StyleSheet.create({
     },
     eventTitle: {
         fontWeight: "bold",
-        fontSize: 24,
         color: "#fff",
         fontFamily: "Source-Sans-Pro-Bold",
         textAlign: "center",
     },
     touchableBar: {
-        width: "80%",
         backgroundColor: "#737373",
-        padding: 10,
         borderRadius: 15,
         alignItems: "center",
         alignSelf: "center",
-        marginTop: -10,
         zIndex: -1, // Ensures the bar is below the notification container
     },
     touchableText: {
         color: "#FFFFFF",
-        fontSize: 24,
         fontFamily: "Poppins-Bold",
     },
 });
