@@ -209,7 +209,6 @@ const styles = StyleSheet.create({
         fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
     section: {
-        marginVertical: height * 0.01, // Vertical margin based on screen height
         paddingHorizontal: width * 0.04, // Horizontal padding based on width
     },
     sectionTitle: {
