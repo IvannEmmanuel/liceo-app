@@ -6,11 +6,39 @@ import {
     Switch,
     ScrollView,
     TouchableOpacity,
+    Dimensions,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import loadFonts from "../../Style/load";
+import { useState, useEffect } from "react";
+
+// Get screen dimensions
+const { width, height } = Dimensions.get("window");
 
 const Profile = () => {
     const [silentMode, setSilentMode] = React.useState(false);
+    const [fontsLoaded, setFontsLoaded] = useState(false);
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                await loadFonts();
+                setFontsLoaded(true);
+            } catch (error) {
+                console.error("Error loading fonts:", error);
+            }
+        };
+
+        load();
+    }, []);
+
+    if (!fontsLoaded) {
+        return null; // Render nothing while fonts are loading
+    }
+
+    const handleClose = () => {
+        navigation.navigate("Dashboard");
+    };
 
     const userInfo = [
         { label: "Fullname", value: "User", icon: "account" },
@@ -26,7 +54,9 @@ const Profile = () => {
     return (
         <View style={styles.container}>
             {/* Header */}
-            <View style={styles.header}></View>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Profile</Text>
+            </View>
 
             {/* Profile Section */}
             <ScrollView>
@@ -39,7 +69,7 @@ const Profile = () => {
                     </View>
                     <Text style={styles.profileName}>User</Text>
                     <Text style={styles.profileDetails}>Grade 12 STEM 30</Text>
-                    <Text style={styles.profileDetails}>user@liceo.edu.ph</Text>
+                    <Text style={styles.profileEmail}>user@liceo.edu.ph</Text>
                     <Text style={styles.welcomeText}>Welcome, USER!</Text>
                 </View>
 
@@ -82,7 +112,9 @@ const Profile = () => {
                                 />
                             </View>
                             <View style={styles.textContainer}>
-                                <Text style={styles.rowTitle}>Silent Mode</Text>
+                                <Text style={styles.silentTitle}>
+                                    Silent Mode
+                                </Text>
                                 <Text style={styles.rowSubtitle}>
                                     Notifications & Message
                                 </Text>
@@ -117,15 +149,22 @@ const InfoCard = ({ icon, label, value }) => (
 );
 
 const styles = StyleSheet.create({
+    header: {
+        backgroundColor: "#1f2a50",
+        height: 60,
+        justifyContent: "center",
+        alignItems: "center",
+        width: width, // Ensure full width for the header
+    },
+    headerTitle: {
+        color: "#FFF",
+        fontSize: width * 0.05, // Scaling font size based on screen width
+        fontWeight: "bold",
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
+    },
     container: {
         flex: 1,
-        backgroundColor: "#FFF", // Set background color to white
-    },
-    header: { height: 40, backgroundColor: "transparent" },
-    time: {
-        color: "#FFF",
-        fontSize: 16,
-        fontWeight: "bold",
+        backgroundColor: "#FFF",
     },
     statusIcons: {
         flexDirection: "row",
@@ -133,7 +172,7 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         alignItems: "center",
-        marginVertical: 16,
+        marginBottom: height * 0.02, // Margin based on screen height
     },
     profileIconContainer: {
         position: "relative",
@@ -147,40 +186,49 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     profileName: {
-        fontSize: 20,
+        fontSize: width * 0.05, // Font size relative to screen width
         fontWeight: "bold",
         color: "#263238",
-        marginTop: 8,
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
     profileDetails: {
-        fontSize: 14,
+        fontWeight: "bold",
+        fontSize: width * 0.04, // Adjust font size for details
+        color: "#263238",
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
+    },
+    profileEmail: {
+        fontSize: width * 0.04, // Adjust font size for details
         color: "#757575",
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
     welcomeText: {
-        fontSize: 16,
+        fontSize: width * 0.05, // Welcome text scaling
         fontWeight: "bold",
         color: "#8D2424",
-        marginTop: 16,
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
     section: {
-        marginVertical: 8,
-        paddingHorizontal: 16,
+        marginVertical: height * 0.01, // Vertical margin based on screen height
+        paddingHorizontal: width * 0.04, // Horizontal padding based on width
     },
     sectionTitle: {
-        fontSize: 16,
+        fontSize: width * 0.05, // Section title size relative to screen width
         fontWeight: "bold",
         color: "#263238",
         marginBottom: 8,
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
     infoContainer: {
         flexDirection: "row",
-        padding: 12,
+        paddingVertical: height * 0.015, // Vertical padding based on screen height
+        paddingHorizontal: width * 0.04, // Horizontal padding based on width
         alignItems: "center",
-        borderBottomWidth: 1, // Top border
-        borderColor: "#E0E0E0", // Light gray border color
+        borderBottomWidth: 1,
+        borderColor: "#E0E0E0",
     },
     iconContainer: {
-        backgroundColor: "#1f2a50", // Background color for icons
+        backgroundColor: "#1f2a50",
         padding: 8,
         borderRadius: 8,
     },
@@ -190,29 +238,35 @@ const styles = StyleSheet.create({
     },
     redButton: {
         backgroundColor: "#8D2424",
-        borderRadius: 8,
-        padding: 2,
+        borderRadius: 5,
+        padding: 1, // Adjusted padding for better visibility
     },
     row: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingVertical: 12,
-        paddingHorizontal: 16, // Ensure padding on both sides for better spacing
+        paddingVertical: height * 0.02, // Vertical padding based on height
+        paddingHorizontal: width * 0.04, // Horizontal padding
     },
     rowContent: {
         flexDirection: "row",
         alignItems: "center",
-        flex: 1, // Ensures the icons and text are spaced properly
+        flex: 1,
     },
     rowTitle: {
-        fontSize: 14,
-        fontWeight: "bold",
+        fontSize: width * 0.04, // Font size adjusted for responsiveness
+        color: "#757575",
+        fontFamily: "helvetica-world-regular", // Apply Poppins-Bold font
+    },
+    silentTitle: {
+        fontSize: width * 0.04, // Font size adjusted for responsiveness
         color: "#263238",
+        fontFamily: "helvetica-world-regular",
     },
     rowSubtitle: {
-        fontSize: 12,
-        color: "#757575",
+        fontSize: width * 0.035, // Font size for subtitle
+        color: "#263238",
+        fontFamily: "Poppins-Bold", // Apply Poppins-Bold font
     },
 });
 

@@ -61,7 +61,7 @@ const Calendar = () => {
 
     return (
         <ImageBackground
-            source={require("../../Images/Calendar Background.jpg")} // Replace with your image path
+            source={require("../../Images/CalendarBackground.jpg")} // Replace with your image path
             style={styles.container}
             resizeMode="cover"
         >
