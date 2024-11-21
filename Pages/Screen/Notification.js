@@ -51,7 +51,7 @@ const Notification = () => {
 
     return (
         <ImageBackground
-            source={require("../../Images/Calendar Background.jpg")}
+            source={require("../../Images/CalendarBackground.jpg")}
             style={[styles.container, { width, height }]}
             resizeMode="cover"
         >

@@ -17,6 +17,11 @@ const LiceoGames = () => {
     );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: "#1f2a50",
+        flex: 1,
+    },
+});
 
 export default LiceoGames;
