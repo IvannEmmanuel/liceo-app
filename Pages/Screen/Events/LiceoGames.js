@@ -34,7 +34,7 @@ const LiceoGames = () => {
         return null; // Render nothing while fonts are loading
     }
     const handleClose = () => {
-        navigation.navigate("Dashboard");
+        navigation.navigate("Dashboard", { screen: "Notification" });
     };
 
     return (
