@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Platform,
   Keyboard,
+  FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -30,6 +31,8 @@ const Map = () => {
   const [currentImage, setCurrentImage] = useState(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const navigation = useNavigation();
+  const [filteredLocations, setFilteredLocations] = useState([]);
+  const [isSearchValid, setIsSearchValid] = useState(true);
 
   const [animation] = useState(new Animated.Value(0));
 
@@ -133,21 +136,54 @@ const Map = () => {
     }
   }, [userLocation]);
 
-  const handleSearch = () => {
-    const query = searchQuery.toLowerCase();
-    const foundLocation = locations.find(
-      (location) => location.name.toLowerCase() === query
-    );
-    if (foundLocation) {
-      setSelectedLocation(foundLocation);
-      setInfoHeader(searchQuery.toUpperCase());
-      setIsExpanded(false);
-      setCurrentImage(foundLocation.image);
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (text) {
+      const filtered = locations.filter((location) =>
+        location.name.toLowerCase().startsWith(text.toLowerCase())
+      );
+      setFilteredLocations(filtered);
+
+      // Check if the search is valid (no matching locations)
+      if (filtered.length === 0) {
+        setIsSearchValid(false); // Show error icon if no match
+      } else {
+        setIsSearchValid(true); // Valid search
+      }
     } else {
-      setSelectedLocation(null);
-      setInfoHeader("");
-      setCurrentImage(null);
+      setFilteredLocations([]);
+      setIsSearchValid(true); // Reset to valid when empty
     }
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchQuery) {
+      const searchTerm = searchQuery.toLowerCase().trim();
+      const matchedLocation = locations.find(
+        (location) => location.name.toLowerCase() === searchTerm
+      );
+
+      if (matchedLocation) {
+        handleSelectLocation(matchedLocation);
+      } else {
+        // Try partial match if exact match fails
+        const partialMatch = locations.find((location) =>
+          location.name.toLowerCase().includes(searchTerm)
+        );
+        if (partialMatch) {
+          handleSelectLocation(partialMatch);
+        }
+      }
+    }
+  };
+
+  const handleSelectLocation = (location) => {
+    setSelectedLocation(location);
+    setInfoHeader(location.name.toUpperCase());
+    setIsExpanded(false);
+    setCurrentImage(location.image);
+    setSearchQuery(location.name);
+    setFilteredLocations([]);
     Keyboard.dismiss();
   };
 
@@ -230,7 +266,9 @@ const Map = () => {
               ]}
             >
               {isExpanded ? (
-                <ScrollView contentContainerStyle={styles.expandedScrollContent}>
+                <ScrollView
+                  contentContainerStyle={styles.expandedScrollContent}
+                >
                   <View style={styles.expandedContent}>
                     <Text style={styles.expandedInfoHeader}>{infoHeader}</Text>
                     <Text style={styles.expandedDescription}>
@@ -305,27 +343,48 @@ const Map = () => {
         )}
       </View>
 
-      <View
-        style={[
-          styles.searchBar,
-          keyboardVisible && styles.searchBarKeyboardVisible,
-        ]}
-      >
+      <View style={styles.searchBar}>
         <Icon
-          name="search"
+          name={isSearchValid ? "search" : "times"} // Change icon based on search validity
           size={width * 0.05}
-          color="#888"
+          color={isSearchValid ? "#888" : "#ff3b30"}
           style={styles.icon}
         />
         <TextInput
           placeholder="Search for a destination"
           style={styles.inputLoc}
           value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={handleSearch}
+          onChangeText={handleSearch}
+          onSubmitEditing={handleSearchSubmit}
           returnKeyType="search"
+          autoCapitalize="none" // Add this to prevent auto-capitalization
         />
       </View>
+
+      {/* List of Filtered Locations */}
+      {filteredLocations.length > 0 && (
+        <FlatList
+          data={filteredLocations}
+          keyExtractor={(item) => item.name}
+          style={styles.autocompleteList}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.autocompleteItem}
+              onPress={() => handleSelectLocation(item)}
+            >
+              <View style={styles.autocompleteItemContent}>
+                <Icon
+                  name="search"
+                  size={width * 0.04}
+                  color="#888"
+                  style={styles.autocompleteIcon}
+                />
+                <Text style={styles.autocompleteText}>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -469,6 +528,33 @@ const styles = StyleSheet.create({
   expandedContent: {
     flex: 1,
   },
+  autocompleteList: {
+    position: "absolute",
+    top: height * 0.135, // Adjust this value to position the list below the search bar
+    left: width * 0.025,
+    right: width * 0.025,
+    backgroundColor: "white",
+    borderBottomLeftRadius: width * 0.025,
+    borderBottomRightRadius: width * 0.025,
+    maxHeight: height * 0.3,
+    zIndex: 2,
+    backgroundColor: "#f1eee7",
+  },
+  autocompleteItem: {
+    padding: width * 0.03,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  autocompleteItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  autocompleteIcon: {
+    marginRight: width * 0.02,
+  },
+  autocompleteText: {
+    fontSize: width * 0.04,
+  }
 });
 
 export default Map;
