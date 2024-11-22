@@ -1,8 +1,19 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Importing MaterialCommunityIcons for icons
 
 const NotificationContext = ({ notification, onClose }) => {
+    const navigation = useNavigation();
+
+    const handleViewPress = () => {
+        onClose(); // Close the modal first
+        navigation.navigate('Dashboard', {
+          screen: 'Notification',
+          params: { screen: 'Founding' }
+        });
+      }
+    
     return (
         <View style={styles.notificationContainer}>
             {/* Bell Icon in Circular Container */}
@@ -27,7 +38,7 @@ const NotificationContext = ({ notification, onClose }) => {
                 <TouchableOpacity onPress={onClose} style={styles.button}>
                     <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={handleViewPress}>
                     <Text style={styles.buttonText}>View</Text>
                 </TouchableOpacity>
             </View>

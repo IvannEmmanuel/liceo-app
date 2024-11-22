@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Modal, Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import loadFonts from "../Style/load";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Screens
 import Map from "./Screen/Map";
@@ -11,8 +12,11 @@ import Notification from "./Screen/Notification";
 import Profile from "./Screen/Profile";
 import Locate from "./Screen/Locate";
 import NotificationContext from "./components/NotificationContext"; // Adjust path as necessary
+import FoundingAnniversary from "./Screen/Events/FoundingAnniversary";
+import LiceoGames from "./Screen/Events/LiceoGames";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 // Get screen width and height for responsiveness
 const { width, height } = Dimensions.get("window");
@@ -64,6 +68,14 @@ const Dashboard = () => {
     if (!fontsLoaded) {
         return null;
     }
+
+    const NotificationStack = () => (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="NotificationList" component={Notification} />
+            <Stack.Screen name="Founding" component={FoundingAnniversary} />
+            <Stack.Screen name="LiceoGames" component={LiceoGames} />
+        </Stack.Navigator>
+    );
 
     return (
         <>
@@ -135,7 +147,7 @@ const Dashboard = () => {
                 <Tab.Screen name="Map" component={Map} />
                 <Tab.Screen name="Calendar" component={Calendar} />
                 <Tab.Screen name="Locate" component={Locate} />
-                <Tab.Screen name="Notification" component={Notification} />
+                <Tab.Screen name="Notification" component={NotificationStack} />
                 <Tab.Screen name="Profile" component={Profile} />
             </Tab.Navigator>
 
