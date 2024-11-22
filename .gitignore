@@ -29,6 +29,9 @@ yarn-error.*
 .DS_Store
 *.pem
 
+android/gradle.properties
+android/app/my-upload-key.keystore
+
 # local env files
 .env*.local
 

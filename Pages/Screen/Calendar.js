@@ -57,6 +57,34 @@ const Calendar = () => {
             time: "7 - 10 AM",
             location: "LDCU MAIN CAMPUS",
         },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
+        {
+            date: "TBA",
+            title: "TO BE ANNOUNCED",
+        },
     ];
 
     return (

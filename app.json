@@ -12,6 +12,15 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.iemmanuel.liceoapp"
+    },
+    "plugins": [
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "47333098-f1f4-4d9c-af4b-9d64a23a5aca"
       }
     }
   }
