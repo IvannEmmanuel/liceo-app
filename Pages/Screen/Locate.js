@@ -67,7 +67,7 @@ const Locate = ({ route }) => {
         const API_KEY = "AlzaSy-Yy3WwWuCy4umW2tT9bfaaBVO8Al1P-5m"; // Replace with a secure method to load the API key
         const origin = `${currentLocation.latitude},${currentLocation.longitude}`;
         const destination = `${latitude},${longitude}`;
-        const url = `https://maps.gomaps.pro/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${API_KEY}`;
+        const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&key=${API_KEY}`;
 
         const response = await axios.get(url);
         const points = response.data.routes[0]?.overview_polyline?.points;
